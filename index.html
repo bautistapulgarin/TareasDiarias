@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_25.html -->
+<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_29.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control diario</title>
+    <script src="./index_files/jspdf.umd.min.js.descarga"></script>
+    <script src="./index_files/html2canvas.min.js.descarga"></script>
     <style>
         * {
             margin: 0;
@@ -45,7 +47,6 @@
         nav a {
             text-decoration: none;
             color: #2a2a2a;
-            margin: 0 20px;
             transition: opacity 0.3s;
         }
         nav a:hover {
@@ -62,7 +63,6 @@
             letter-spacing: 1px;
             text-align: center;
             margin-bottom: 30px;
-            line-height: 1.2;
         }
         .title-section {
             display: flex;
@@ -97,12 +97,6 @@
             gap: 40px;
             margin-bottom: 50px;
         }
-        .left-panel, .right-panel {
-            max-width: 100%;
-        }
-        .tareas-section, .notas-section {
-            margin-bottom: 50px;
-        }
         h2 {
             font-size: 1.3rem;
             font-weight: 400;
@@ -135,18 +129,10 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        .tarea-prioridad {
-            font-size: 13px;
-            color: #666;
-        }
         .tarea-info {
             font-size: 12px;
             color: #666;
             margin-bottom: 10px;
-        }
-        .tarea-buttons {
-            display: flex;
-            gap: 8px;
         }
         .btn-small {
             flex: 1;
@@ -168,16 +154,8 @@
         .btn-small.iniciar:hover {
             background: #4a6a7b;
         }
-        .btn-small.terminar {
-            background: #8b5a5a;
-        }
         .btn-small.terminar:hover {
             background: #6b4a4a;
-        }
-        .btn-small:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            opacity: 0.6;
         }
         .tarea-check {
             width: 100%;
@@ -188,11 +166,9 @@
             font-family: 'Georgia', serif;
             font-size: 14px;
             cursor: default;
-            transition: all 0.3s;
             border-radius: 20px;
             text-align: center;
         }
-        /* NOTAS STYLES */
         .notas-form {
             border: 1px solid #d0d0cc;
             padding: 20px;
@@ -210,8 +186,7 @@
             margin-bottom: 7px;
             color: #666;
         }
-        input[type="text"],
-        textarea {
+        input[type="text"], textarea {
             width: 100%;
             padding: 11px 13px;
             border: 1px solid #d0d0cc;
@@ -219,15 +194,10 @@
             font-family: 'Georgia', serif;
             font-size: 13px;
             color: #2a2a2a;
-            transition: border-color 0.3s;
         }
-        input[type="text"]:focus,
-        textarea:focus {
+        input[type="text"]:focus, textarea:focus {
             outline: none;
             border-color: #2a2a2a;
-        }
-        input::placeholder, textarea::placeholder {
-            color: #999;
         }
         .subpuntos-container {
             margin-bottom: 20px;
@@ -239,9 +209,8 @@
             border: 1px solid #e0e0dd;
             padding: 15px;
             background: #f8f8f6;
-            border-radius: 3px;
         }
-        .subpunto-input {
+        .subpunto-input, .subpunto-notas {
             width: 100%;
             padding: 10px 12px;
             border: 1px solid #d0d0cc;
@@ -249,20 +218,13 @@
             font-family: 'Georgia', serif;
             font-size: 13px;
             color: #2a2a2a;
-            margin-bottom: 12px;
         }
         .subpunto-notas {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d0d0cc;
-            background: #fafaf8;
-            font-family: 'Georgia', serif;
-            font-size: 12px;
-            color: #2a2a2a;
-            resize: vertical;
+            margin-top: 12px;
             min-height: 70px;
+            resize: vertical;
         }
-        .btn-add-subpunto {
+        .btn-add-subpunto, .btn-guardar-notas {
             width: 100%;
             padding: 12px;
             background: #3d3d38;
@@ -275,7 +237,15 @@
             cursor: pointer;
             transition: all 0.3s;
             border-radius: 25px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+        }
+        .btn-add-subpunto:hover, .btn-guardar-notas:hover {
+            background: #2a2a2a;
+        }
+        .tareas-notas-container {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #d0d0cc;
         }
         .tareas-lista {
             display: flex;
@@ -290,8 +260,6 @@
             padding: 10px 12px;
             background: #f8f8f6;
             border: 1px solid #e0e0dd;
-            border-radius: 3px;
-            font-size: 13px;
         }
         .btn-eliminar-tarea {
             background: none;
@@ -300,31 +268,24 @@
             cursor: pointer;
             font-size: 16px;
             padding: 0;
-            transition: color 0.3s;
         }
         .btn-eliminar-tarea:hover {
             color: #721c24;
         }
-        .btn-guardar-notas {
+        #tareaInput {
+            margin-top: 10px;
+        }
+        #btnAddTarea {
             width: 100%;
-            padding: 12px;
-            background: #3d3d38;
+            padding: 10px;
+            background: #5a7a8b;
             color: #fafaf8;
             border: none;
             font-family: 'Georgia', serif;
             font-size: 11px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 25px;
-        }
-        .btn-guardar-notas:hover {
-            background: #2a2a2a;
-        }
-        .btn-guardar-notas:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+            margin-top: 8px;
+            border-radius: 20px;
         }
         .mensaje {
             text-align: center;
@@ -341,7 +302,6 @@
         .status.connected {
             color: #155724;
         }
-        /* MODAL NUEVA TAREA */
         .modal {
             display: none;
             position: fixed;
@@ -364,19 +324,14 @@
             width: 90%;
             max-width: 450px;
             position: relative;
-            border-radius: 4px;
         }
         .modal-close {
             position: absolute;
             top: 18px;
             right: 22px;
             font-size: 26px;
-            font-weight: bold;
             cursor: pointer;
             color: #999;
-        }
-        .modal-close:hover {
-            color: #2a2a2a;
         }
         .modal-header {
             text-align: center;
@@ -387,20 +342,6 @@
         .modal-header h3 {
             font-size: 1.3rem;
             font-weight: 400;
-            letter-spacing: 0.5px;
-        }
-        .prioridad-selector {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-        input[type="number"] {
-            width: 60px;
-        }
-        .prioridad-display {
-            font-size: 18px;
-            letter-spacing: 1px;
-            color: #666;
         }
         .btn-primary {
             width: 100%;
@@ -413,51 +354,11 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s;
             border-radius: 25px;
             margin-top: 15px;
         }
         .btn-primary:hover {
             background: #2a2a2a;
-        }
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        /* MODAL TIEMPO */
-        .modal-tiempo-content {
-            background: #fafaf8;
-            padding: 35px;
-            border: 1px solid #d0d0cc;
-            width: 90%;
-            max-width: 450px;
-            position: relative;
-        }
-        .modal-info {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #d0d0cc;
-        }
-        .modal-info p {
-            font-size: 13px;
-            margin: 4px 0;
-        }
-        .modal-form {
-            margin-bottom: 20px;
-        }
-        .hora-actual {
-            font-size: 11px;
-            color: #999;
-            margin-top: 6px;
-        }
-        .hora-inicio-display {
-            background: #f0f0ed;
-            padding: 12px;
-            border: 1px solid #e0e0dd;
-            margin: 15px 0;
-            font-size: 14px;
-            color: #2a2a2a;
-            border-radius: 3px;
         }
         footer {
             border-top: 1px solid #d0d0cc;
@@ -491,154 +392,21 @@
         <div class="title-section">
             <h1>CONTROL DIARIO</h1>
             <div class="btn-icons">
-                <button class="btn-add" id="btnNuevaTarea" title="Nueva tarea">+</button>
-                <button class="btn-notebook" id="btnNuevaNotas" title="Tomar notas">📓</button>
+                <button class="btn-add" id="btnNuevaTarea">+</button>
+                <button class="btn-notebook" id="btnNuevaNotas">📓</button>
             </div>
         </div>
         
         <div id="status" class="status connected">✓ Conectado</div>
         
-        <!-- PANELES -->
         <div class="panels-container">
-            <!-- PANEL IZQUIERDO - CONTROL HORARIO -->
             <div class="left-panel">
                 <div class="tareas-section">
                     <h2>Tareas del Día</h2>
-                    <div id="listaTareas" class="tareas-list"><div class="tarea-card">
-                <div class="tarea-header">
-                    <div>
-                        <div class="tarea-proyecto">Reunion de gerencia</div>
-                        <div class="tarea-title">Reunion de gerencia 1</div>
-                    </div>
-                    <div class="tarea-prioridad">8/10</div>
-                </div>
-                <div class="tarea-info">
-                    15:33 → 15:37
-                </div>
-                <div class="tarea-info" id="estado-DN9ipif7L4G69vjvL49G">
-                    ✓ Completado: 15:33 → 15:44
-                </div>
-                <div class="tarea-info" style="color: #666; font-size: 11px;">Variación: +0h 7m</div>
-                <div class="tarea-buttons">
-                    <div class="tarea-check">✓ Completado</div>
-                </div>
-            </div><div class="tarea-card">
-                <div class="tarea-header">
-                    <div>
-                        <div class="tarea-proyecto">aa</div>
-                        <div class="tarea-title">bb</div>
-                    </div>
-                    <div class="tarea-prioridad">8/10</div>
-                </div>
-                <div class="tarea-info">
-                    15:45 → 08:47
-                </div>
-                <div class="tarea-info" id="estado-xSX4nQgwai3VDGwLYWtR">
-                    ✓ Completado: 15:43 → 15:43
-                </div>
-                <div class="tarea-info" style="color: #666; font-size: 11px;">Variación: +6h 58m</div>
-                <div class="tarea-buttons">
-                    <div class="tarea-check">✓ Completado</div>
-                </div>
-            </div><div class="tarea-card">
-                <div class="tarea-header">
-                    <div>
-                        <div class="tarea-proyecto">cece</div>
-                        <div class="tarea-title">cecece</div>
-                    </div>
-                    <div class="tarea-prioridad">7/10</div>
-                </div>
-                <div class="tarea-info">
-                    03:47 → 15:51
-                </div>
-                <div class="tarea-info" id="estado-dDJmzQVoK0GA8WzddxeO">
-                    ✓ Completado: 15:45 → 15:45
-                </div>
-                <div class="tarea-info" style="color: #666; font-size: 11px;">Variación: -12h 4m</div>
-                <div class="tarea-buttons">
-                    <div class="tarea-check">✓ Completado</div>
-                </div>
-            </div><div class="tarea-card">
-                <div class="tarea-header">
-                    <div>
-                        <div class="tarea-proyecto">fsdfs</div>
-                        <div class="tarea-title">sdfdsfsd</div>
-                    </div>
-                    <div class="tarea-prioridad">6/10</div>
-                </div>
-                <div class="tarea-info">
-                    03:49 → 07:50
-                </div>
-                <div class="tarea-info" id="estado-x9nC1pCMP9DrHy1E3SPm">
-                    Pendiente
-                </div>
-                
-                <div class="tarea-buttons">
-                    <button class="btn-small terminar btn-iniciar" data-id="x9nC1pCMP9DrHy1E3SPm" data-estado="pendiente">
-                            TERMINAR
-                        </button>
-                </div>
-            </div><div class="tarea-card">
-                <div class="tarea-header">
-                    <div>
-                        <div class="tarea-proyecto">REUNION LEAN 28012026 REUNION LEAN 28012026</div>
-                        <div class="tarea-title">REUNION LEAN 28012026 REUNION LEAN 28012026</div>
-                    </div>
-                    <div class="tarea-prioridad">5/10</div>
-                </div>
-                <div class="tarea-info">
-                    15:30 → 15:35
-                </div>
-                <div class="tarea-info" id="estado-Tf6gKg4H6a51pi5GWlnL">
-                    ✓ Completado: 15:30 → 15:31
-                </div>
-                <div class="tarea-info" style="color: #666; font-size: 11px;">Variación: -0h 4m</div>
-                <div class="tarea-buttons">
-                    <div class="tarea-check">✓ Completado</div>
-                </div>
-            </div><div class="tarea-card">
-                <div class="tarea-header">
-                    <div>
-                        <div class="tarea-proyecto">REUNION LEAN 28012026</div>
-                        <div class="tarea-title">REUNION LEAN 28012026</div>
-                    </div>
-                    <div class="tarea-prioridad">4/10</div>
-                </div>
-                <div class="tarea-info">
-                    04:28 → 19:31
-                </div>
-                <div class="tarea-info" id="estado-MiYD8KqoRMUB3Mak130x">
-                    ✓ Completado: 04:28 → 15:28
-                </div>
-                <div class="tarea-info" style="color: #666; font-size: 11px;">Variación: -4h 3m</div>
-                <div class="tarea-buttons">
-                    <div class="tarea-check">✓ Completado</div>
-                </div>
-            </div><div class="tarea-card">
-                <div class="tarea-header">
-                    <div>
-                        <div class="tarea-proyecto">dsd</div>
-                        <div class="tarea-title">fsdfsd</div>
-                    </div>
-                    <div class="tarea-prioridad">3/10</div>
-                </div>
-                <div class="tarea-info">
-                    03:50 → 15:51
-                </div>
-                <div class="tarea-info" id="estado-TFy2asyYk0IpGH9Z3fiw">
-                    Pendiente
-                </div>
-                
-                <div class="tarea-buttons">
-                    <button class="btn-small terminar btn-iniciar" data-id="TFy2asyYk0IpGH9Z3fiw" data-estado="pendiente">
-                            TERMINAR
-                        </button>
-                </div>
-            </div></div>
+                    <div id="listaTareas" class="tareas-list"><p style="text-align: center; color: #999;">Sin tareas</p></div>
                 </div>
             </div>
 
-            <!-- PANEL DERECHO - TOMA DE NOTAS -->
             <div class="right-panel">
                 <div class="notas-section">
                     <h2>Toma de Notas</h2>
@@ -657,14 +425,14 @@
                         
                         <button class="btn-add-subpunto" id="btnAddSubpunto">+ AGREGAR SUBPUNTO</button>
                         
-                        <div class="tareas-notas-container" id="tareasNotasContainer" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #d0d0cc;">
-                            <label style="display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; color: #666;">Tareas</label>
+                        <div class="tareas-notas-container" id="tareasNotasContainer" style="display: none;">
+                            <label>Tareas</label>
                             <div class="tareas-lista" id="tareasLista"></div>
-                            <input type="text" id="tareaInput" placeholder="Nueva tarea" style="width: 100%; padding: 10px 12px; border: 1px solid #d0d0cc; background: #fafaf8; font-family: &#39;Georgia&#39;, serif; font-size: 13px; color: #2a2a2a; margin-top: 10px;">
-                            <button class="btn-add-tarea" id="btnAddTarea" style="width: 100%; padding: 10px; background: #5a7a8b; color: #fafaf8; border: none; font-family: &#39;Georgia&#39;, serif; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; margin-top: 8px; border-radius: 20px;">+ Agregar Tarea</button>
+                            <input type="text" id="tareaInput" placeholder="Nueva tarea">
+                            <button class="btn-primary" id="btnAddTarea">+ AGREGAR TAREA</button>
                         </div>
                         
-                        <button class="btn-add-subpunto" id="btnToggleTareas" style="margin-top: 15px;">+ AGREGAR TAREAS</button>
+                        <button class="btn-add-subpunto" id="btnToggleTareas">+ AGREGAR TAREAS</button>
                         
                         <button class="btn-guardar-notas" id="btnGuardarNotas">GUARDAR NOTAS</button>
                         <div id="mensajeNotas" class="mensaje"></div>
@@ -672,72 +440,57 @@
                 </div>
             </div>
         </div>
-        
     </div>
     
-    <!-- MODAL NUEVA TAREA -->
     <div id="modalNuevaTarea" class="modal">
         <div class="modal-content">
             <span class="modal-close" id="closeModalTarea">×</span>
-            <div class="modal-header">
-                <h3>Nueva Tarea</h3>
-            </div>
-            
+            <div class="modal-header"><h3>Nueva Tarea</h3></div>
             <div class="form-field">
                 <label>Proyecto</label>
                 <input type="text" id="proyecto" placeholder="Nombre del proyecto">
             </div>
-            
             <div class="form-field">
                 <label>Tarea</label>
                 <input type="text" id="tarea" placeholder="Descripción de la tarea">
             </div>
-            
             <div class="form-field">
                 <label>Hora de compromiso inicial</label>
                 <input type="time" id="horaInicial">
             </div>
-            
             <div class="form-field">
                 <label>Hora tentativa de cierre</label>
                 <input type="time" id="horaCierre">
             </div>
-            
             <div class="form-field">
                 <label>Prioridad (0-10)</label>
-                <div class="prioridad-selector">
-                    <input type="number" id="prioridad" min="0" max="10" placeholder="5" value="5">
-                    <div class="prioridad-display" id="prioridadDisplay">5/10</div>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <input type="number" id="prioridad" min="0" max="10" value="5" style="width: 60px;">
+                    <div id="prioridadDisplay">5/10</div>
                 </div>
             </div>
-            
             <button id="guardarTarea" class="btn-primary">GUARDAR</button>
             <div id="mensajeTarea" class="mensaje"></div>
         </div>
     </div>
     
-    <!-- MODAL TIEMPO -->
     <div id="modalTiempo" class="modal">
-        <div class="modal-tiempo-content">
+        <div class="modal-content">
             <span class="modal-close" id="closeModalTiempo">×</span>
             <h3 id="modalTitulo" style="text-align: center; font-size: 1.1rem; margin-bottom: 25px; font-weight: 400;">Registrar Hora de Inicio</h3>
-            
-            <div class="modal-info">
-                <p><strong id="modalProyecto"></strong></p>
-                <p id="modalTareaNombre"></p>
+            <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #d0d0cc;">
+                <p id="modalProyecto" style="font-size: 13px; margin: 4px 0;"><strong></strong></p>
+                <p id="modalTareaNombre" style="font-size: 13px; margin: 4px 0;"></p>
             </div>
-            
-            <div class="modal-form">
+            <div class="form-field">
                 <label id="labelHora">Hora de Inicio:</label>
                 <input type="time" id="horaRegistro">
-                <p id="horaActual" class="hora-actual"></p>
-                
+                <p id="horaActual" style="font-size: 11px; color: #999; margin-top: 6px;"></p>
                 <div id="horaInicioMostrada" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #d0d0cc;">
-                    <label style="margin-bottom: 10px;">Hora de Inicio Registrada:</label>
-                    <div class="hora-inicio-display" id="horaInicioValor"></div>
+                    <label>Hora de Inicio Registrada:</label>
+                    <div id="horaInicioValor" style="background: #f0f0ed; padding: 12px; border: 1px solid #e0e0dd; margin: 15px 0; font-size: 14px; color: #2a2a2a;"></div>
                 </div>
             </div>
-            
             <button id="btnConfirmarHora" class="btn-primary">CONFIRMAR</button>
         </div>
     </div>
@@ -746,7 +499,6 @@
         <p>© 2025 Control Diario</p>
     </footer>
 
-    <script src="./index_files/html2pdf.bundle.min.js.descarga"></script>
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
         import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
@@ -763,12 +515,12 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const { jsPDF } = window.jspdf;
 
-        const statusDiv = document.getElementById('status');
-        statusDiv.textContent = '✓ Conectado';
-        statusDiv.classList.add('connected');
+        document.getElementById('status').textContent = '✓ Conectado';
+        document.getElementById('status').classList.add('connected');
 
-        // ELEMENTOS TAREAS
+        // TAREAS
         const btnNuevaTarea = document.getElementById('btnNuevaTarea');
         const modalNuevaTarea = document.getElementById('modalNuevaTarea');
         const closeModalTarea = document.getElementById('closeModalTarea');
@@ -781,45 +533,36 @@
         const prioridadDisplay = document.getElementById('prioridadDisplay');
         const mensajeTarea = document.getElementById('mensajeTarea');
         const listaTareas = document.getElementById('listaTareas');
-        
         const modalTiempo = document.getElementById('modalTiempo');
         const closeModalTiempo = document.getElementById('closeModalTiempo');
         const btnConfirmarHora = document.getElementById('btnConfirmarHora');
         const horaRegistro = document.getElementById('horaRegistro');
-        const modalTitulo = document.getElementById('modalTitulo');
-        const labelHora = document.getElementById('labelHora');
-        const horaInicioMostrada = document.getElementById('horaInicioMostrada');
-        const horaInicioValor = document.getElementById('horaInicioValor');
 
-        // ELEMENTOS NOTAS
-        const btnNuevaNotas = document.getElementById('btnNuevaNotas');
+        // NOTAS
+        const btnToggleTareas = document.getElementById('btnToggleTareas');
+        const tareasNotasContainer = document.getElementById('tareasNotasContainer');
+        const tareasLista = document.getElementById('tareasLista');
+        const tareaInput = document.getElementById('tareaInput');
+        const btnAddTarea = document.getElementById('btnAddTarea');
         const reunionInput = document.getElementById('reunionInput');
         const temaInput = document.getElementById('temaInput');
         const subpuntosContainer = document.getElementById('subpuntosContainer');
         const btnAddSubpunto = document.getElementById('btnAddSubpunto');
         const btnGuardarNotas = document.getElementById('btnGuardarNotas');
         const mensajeNotas = document.getElementById('mensajeNotas');
-        const btnToggleTareas = document.getElementById('btnToggleTareas');
-        const tareasNotasContainer = document.getElementById('tareasNotasContainer');
-        const tareasLista = document.getElementById('tareasLista');
-        const tareaInput = document.getElementById('tareaInput');
-        const btnAddTarea = document.getElementById('btnAddTarea');
 
         let tareaActual = null;
         let tareasReunion = [];
 
-        // === TAREAS ===
+        // EVENT LISTENERS TAREAS
         btnNuevaTarea.addEventListener('click', () => {
-            limpiarFormulario();
+            inputProyecto.value = inputTarea.value = inputHoraInicial.value = inputHoraCierre.value = '';
+            inputPrioridad.value = '5';
+            prioridadDisplay.textContent = '5/10';
             modalNuevaTarea.classList.add('show');
         });
-        closeModalTarea.addEventListener('click', () => {
-            modalNuevaTarea.classList.remove('show');
-        });
-        closeModalTiempo.addEventListener('click', () => {
-            modalTiempo.classList.remove('show');
-        });
-
+        closeModalTarea.addEventListener('click', () => modalNuevaTarea.classList.remove('show'));
+        closeModalTiempo.addEventListener('click', () => modalTiempo.classList.remove('show'));
         inputPrioridad.addEventListener('change', () => {
             const val = parseInt(inputPrioridad.value) || 5;
             prioridadDisplay.textContent = `${val}/10`;
@@ -843,18 +586,10 @@
             try {
                 const hoy = new Date().toISOString().split('T')[0];
                 await addDoc(collection(db, 'tareas'), {
-                    proyecto,
-                    tarea,
-                    horaInicial: horaInit,
-                    horaCierre: horaCierr,
-                    prioridad: parseInt(prioridad),
-                    fecha: hoy,
-                    horaRealInicio: null,
-                    horaRealCierre: null,
-                    variacion: null,
-                    estado: 'pendiente'
+                    proyecto, tarea, horaInicial: horaInit, horaCierre: horaCierr,
+                    prioridad: parseInt(prioridad), fecha: hoy,
+                    horaRealInicio: null, horaRealCierre: null, variacion: null, estado: 'pendiente'
                 });
-
                 mostrarMensaje(mensajeTarea, '✓ Guardado', 'success');
                 modalNuevaTarea.classList.remove('show');
                 cargarTareas();
@@ -870,105 +605,80 @@
             const hoy = new Date().toISOString().split('T')[0];
             const q = query(collection(db, 'tareas'), where('fecha', '==', hoy));
             const querySnapshot = await getDocs(q);
-
             let tareas = [];
-            querySnapshot.forEach(doc => {
-                tareas.push({ id: doc.id, data: doc.data() });
-            });
-
+            querySnapshot.forEach(doc => tareas.push({ id: doc.id, data: doc.data() }));
             tareas.sort((a, b) => b.data.prioridad - a.data.prioridad);
-
             listaTareas.innerHTML = '';
-
             if (tareas.length === 0) {
-                listaTareas.innerHTML = '<p style="text-align: center; color: #999; font-size: 13px;">Sin tareas</p>';
+                listaTareas.innerHTML = '<p style="text-align: center; color: #999;">Sin tareas</p>';
                 return;
             }
-
-            tareas.forEach(({ id, data }) => {
-                const card = crearTareaCard(id, data);
-                listaTareas.appendChild(card);
-            });
+            tareas.forEach(({ id, data }) => listaTareas.appendChild(crearTareaCard(id, data)));
         }
 
         function crearTareaCard(id, data) {
             const card = document.createElement('div');
             card.className = 'tarea-card';
-            
             card.innerHTML = `
                 <div class="tarea-header">
                     <div>
                         <div class="tarea-proyecto">${data.proyecto}</div>
                         <div class="tarea-title">${data.tarea}</div>
                     </div>
-                    <div class="tarea-prioridad">${data.prioridad}/10</div>
+                    <div>${data.prioridad}/10</div>
                 </div>
+                <div class="tarea-info">${data.horaInicial} → ${data.horaCierre}</div>
                 <div class="tarea-info">
-                    ${data.horaInicial} → ${data.horaCierre}
-                </div>
-                <div class="tarea-info" id="estado-${id}">
                     ${data.estado === 'completada' ? `✓ Completado: ${data.horaRealInicio} → ${data.horaRealCierre}` : 'Pendiente'}
                 </div>
-                ${data.variacion !== null ? `<div class="tarea-info" style="color: #666; font-size: 11px;">Variación: ${data.variacion}</div>` : ''}
-                <div class="tarea-buttons">
+                ${data.variacion ? `<div class="tarea-info" style="font-size: 11px;">Variación: ${data.variacion}</div>` : ''}
+                <div style="display: flex; gap: 8px;">
                     ${data.estado === 'completada' ? 
                         `<div class="tarea-check">✓ Completado</div>` :
-                        `<button class="btn-small ${data.horaRealInicio ? 'terminar' : 'iniciar'} btn-iniciar" data-id="${id}" data-estado="${data.estado}">
+                        `<button class="btn-small ${data.horaRealInicio ? 'terminar' : 'iniciar'} btn-iniciar" data-id="${id}">
                             ${data.horaRealInicio ? 'TERMINAR' : 'INICIAR'}
                         </button>`
                     }
                 </div>
             `;
-
             const btnIniciar = card.querySelector('.btn-iniciar');
-            if (btnIniciar) {
-                btnIniciar.addEventListener('click', () => abrirModalTiempo(id, data, btnIniciar));
-            }
-
+            if (btnIniciar) btnIniciar.addEventListener('click', () => abrirModalTiempo(id, data));
             return card;
         }
 
-        function abrirModalTiempo(id, data, btn) {
-            tareaActual = { id, data, btn };
-            document.getElementById('modalProyecto').textContent = data.proyecto;
+        function abrirModalTiempo(id, data) {
+            tareaActual = { id, data };
+            document.getElementById('modalProyecto').innerHTML = `<strong>${data.proyecto}</strong>`;
             document.getElementById('modalTareaNombre').textContent = data.tarea;
-            
             const ahora = new Date();
             const horaStr = ahora.getHours().toString().padStart(2, '0') + ':' + ahora.getMinutes().toString().padStart(2, '0');
-            
             if (!data.horaRealInicio) {
-                modalTitulo.textContent = 'Registrar Hora de Inicio';
-                labelHora.textContent = 'Hora de Inicio:';
+                document.getElementById('modalTitulo').textContent = 'Registrar Hora de Inicio';
+                document.getElementById('labelHora').textContent = 'Hora de Inicio:';
                 horaRegistro.value = horaStr;
                 document.getElementById('horaActual').textContent = `Hora actual: ${horaStr}`;
-                horaInicioMostrada.style.display = 'none';
+                document.getElementById('horaInicioMostrada').style.display = 'none';
                 btnConfirmarHora.textContent = 'CONFIRMAR';
             } else {
-                modalTitulo.textContent = 'Terminar Tarea';
-                labelHora.textContent = 'Hora de Cierre:';
+                document.getElementById('modalTitulo').textContent = 'Terminar Tarea';
+                document.getElementById('labelHora').textContent = 'Hora de Cierre:';
                 horaRegistro.value = horaStr;
                 horaRegistro.disabled = true;
                 document.getElementById('horaActual').textContent = `Hora actual: ${horaStr}`;
-                
-                horaInicioMostrada.style.display = 'block';
-                horaInicioValor.textContent = data.horaRealInicio;
+                document.getElementById('horaInicioMostrada').style.display = 'block';
+                document.getElementById('horaInicioValor').textContent = data.horaRealInicio;
                 btnConfirmarHora.textContent = 'TERMINAR';
             }
-            
             modalTiempo.classList.add('show');
         }
 
         btnConfirmarHora.addEventListener('click', async () => {
             if (!tareaActual) return;
-
             const { id, data } = tareaActual;
             const docRef = doc(db, 'tareas', id);
-
             try {
                 if (!data.horaRealInicio) {
-                    await updateDoc(docRef, {
-                        horaRealInicio: horaRegistro.value
-                    });
+                    await updateDoc(docRef, { horaRealInicio: horaRegistro.value });
                     mostrarMensaje(mensajeTarea, '✓ Iniciado', 'success');
                     modalTiempo.classList.remove('show');
                     horaRegistro.disabled = false;
@@ -976,20 +686,20 @@
                 } else {
                     const ahora = new Date();
                     const horaCierre = ahora.getHours().toString().padStart(2, '0') + ':' + ahora.getMinutes().toString().padStart(2, '0');
-
-                    const inicio = convertirHoraMinutos(data.horaInicial);
-                    const cierre = convertirHoraMinutos(data.horaCierre);
-                    const realInicio = convertirHoraMinutos(data.horaRealInicio);
-                    const realCierre = convertirHoraMinutos(horaCierre);
-
+                    const inicio = (parseInt(data.horaInicial.split(':')[0]) * 60) + parseInt(data.horaInicial.split(':')[1]);
+                    const cierre = (parseInt(data.horaCierre.split(':')[0]) * 60) + parseInt(data.horaCierre.split(':')[1]);
+                    const realInicio = (parseInt(data.horaRealInicio.split(':')[0]) * 60) + parseInt(data.horaRealInicio.split(':')[1]);
+                    const realCierre = (parseInt(horaCierre.split(':')[0]) * 60) + parseInt(horaCierre.split(':')[1]);
                     const tiempoPlaneado = cierre - inicio;
                     const tiempoReal = realCierre - realInicio;
                     const variacion = tiempoReal - tiempoPlaneado;
-
+                    const h = Math.floor(Math.abs(variacion) / 60);
+                    const m = Math.abs(variacion) % 60;
+                    const signo = variacion >= 0 ? '+' : '-';
                     await updateDoc(docRef, {
                         horaRealCierre: horaCierre,
                         estado: 'completada',
-                        variacion: minAHora(variacion)
+                        variacion: `${signo}${h}h ${m}m`
                     });
                     mostrarMensaje(mensajeTarea, '✓ Completado', 'success');
                     modalTiempo.classList.remove('show');
@@ -1001,49 +711,7 @@
             }
         });
 
-        function convertirHoraMinutos(horaStr) {
-            const [h, m] = horaStr.split(':').map(Number);
-            return h * 60 + m;
-        }
-
-        function minAHora(minutos) {
-            const h = Math.floor(Math.abs(minutos) / 60);
-            const m = Math.abs(minutos) % 60;
-            const signo = minutos >= 0 ? '+' : '-';
-            return `${signo}${h}h ${m}m`;
-        }
-
-        function mostrarMensaje(elem, texto, tipo) {
-            elem.textContent = texto;
-            elem.style.color = tipo === 'success' ? '#155724' : '#721c24';
-            setTimeout(() => elem.textContent = '', 3000);
-        }
-
-        function limpiarFormulario() {
-            inputProyecto.value = '';
-            inputTarea.value = '';
-            inputHoraInicial.value = '';
-            inputHoraCierre.value = '';
-            inputPrioridad.value = '5';
-            prioridadDisplay.textContent = '5/10';
-            mensajeTarea.textContent = '';
-        }
-
-        // === NOTAS ===
-        function agregarSubpunto() {
-            const item = document.createElement('div');
-            item.className = 'subpunto-item';
-            item.innerHTML = `
-                <input type="text" class="subpunto-input" placeholder="Subpunto">
-                <textarea class="subpunto-notas" placeholder="Notas asociadas..."></textarea>
-            `;
-            subpuntosContainer.appendChild(item);
-        }
-
-        btnAddSubpunto.addEventListener('click', () => {
-            agregarSubpunto();
-        });
-
+        // NOTAS
         btnToggleTareas.addEventListener('click', () => {
             if (tareasNotasContainer.style.display === 'none') {
                 tareasNotasContainer.style.display = 'block';
@@ -1052,6 +720,16 @@
                 tareasNotasContainer.style.display = 'none';
                 btnToggleTareas.textContent = '+ AGREGAR TAREAS';
             }
+        });
+
+        btnAddSubpunto.addEventListener('click', () => {
+            const item = document.createElement('div');
+            item.className = 'subpunto-item';
+            item.innerHTML = `
+                <input type="text" class="subpunto-input" placeholder="Subpunto">
+                <textarea class="subpunto-notas" placeholder="Notas asociadas..."></textarea>
+            `;
+            subpuntosContainer.appendChild(item);
         });
 
         btnAddTarea.addEventListener('click', () => {
@@ -1079,12 +757,8 @@
             tareasReunion.forEach((tarea, index) => {
                 const item = document.createElement('div');
                 item.className = 'tarea-item';
-                item.innerHTML = `
-                    <span>${index + 1}. ${tarea}</span>
-                    <button class="btn-eliminar-tarea" data-index="${index}">✕</button>
-                `;
-                const btnEliminar = item.querySelector('.btn-eliminar-tarea');
-                btnEliminar.addEventListener('click', () => {
+                item.innerHTML = `<span>${index + 1}. ${tarea}</span><button class="btn-eliminar-tarea">✕</button>`;
+                item.querySelector('.btn-eliminar-tarea').addEventListener('click', () => {
                     tareasReunion.splice(index, 1);
                     renderizarTareas();
                 });
@@ -1093,73 +767,127 @@
         }
 
         function generarPDF(reunion, tema, subpuntos) {
-            const element = document.createElement('div');
-            element.style.padding = '20px';
-            element.style.fontFamily = 'Georgia, serif';
-            element.style.backgroundColor = '#ffffff';
+            const pdf = new jsPDF();
+            let y = 15;
+            pdf.setFont('georgia');
             
-            let html = `
-                <h1 style="text-align: center; font-size: 24px; margin-bottom: 10px;">${reunion}</h1>
-                <h2 style="text-align: center; font-size: 16px; color: #666; margin-bottom: 30px;">${tema}</h2>
-                <hr style="border: none; border-top: 1px solid #ccc; margin-bottom: 20px;">
-            `;
-
+            // HEADER CONSTRUCTORA
+            pdf.setFontSize(14);
+            pdf.setFont('georgia', 'bold');
+            pdf.setTextColor(0);
+            pdf.text('CONSTRUCTORA INGEURBE', 105, y, { align: 'center' });
+            y += 8;
+            
+            // SUBTÍTULO EN CURSIVA
+            pdf.setFontSize(11);
+            pdf.setFont('georgia', 'italic');
+            pdf.setTextColor(80);
+            pdf.text('NOTAS PROFESIONAL DE CONSTRUCCIÓN', 105, y, { align: 'center' });
+            y += 12;
+            
+            // LÍNEA SEPARADORA
+            pdf.setDrawColor(150);
+            pdf.line(20, y, 190, y);
+            y += 10;
+            
+            // TÍTULO REUNIÓN
+            pdf.setFontSize(11);
+            pdf.setFont('georgia');
+            pdf.setTextColor(100);
+            pdf.text('REUNIÓN', 20, y);
+            y += 6;
+            pdf.setFontSize(16);
+            pdf.setFont('georgia', 'bold');
+            pdf.setTextColor(0);
+            pdf.text(reunion, 20, y);
+            y += 15;
+            
+            // TÍTULO TEMA
+            pdf.setFontSize(11);
+            pdf.setFont('georgia');
+            pdf.setTextColor(100);
+            pdf.text('TEMA', 20, y);
+            y += 6;
+            pdf.setFontSize(14);
+            pdf.setFont('georgia', 'bold');
+            pdf.setTextColor(0);
+            pdf.text(tema, 20, y);
+            y += 15;
+            
+            // SUBPUNTOS
+            pdf.setFontSize(11);
+            pdf.setFont('georgia');
+            pdf.setTextColor(100);
+            pdf.text('SUBPUNTOS', 20, y);
+            y += 10;
+            
             subpuntos.forEach((item, index) => {
-                html += `
-                    <div style="margin-bottom: 25px;">
-                        <h3 style="font-size: 14px; font-weight: bold; color: #2a2a2a; margin-bottom: 10px;">
-                            ${index + 1}. ${item.subpunto || '(sin título)'}
-                        </h3>
-                        <p style="font-size: 12px; color: #666; line-height: 1.6; margin: 0; white-space: pre-wrap;">
-                            ${item.notas || '(sin notas)'}
-                        </p>
-                    </div>
-                `;
+                if (y > 250) {
+                    pdf.addPage();
+                    y = 20;
+                }
+                // Número y subpunto
+                pdf.setFontSize(11);
+                pdf.setFont('georgia', 'bold');
+                pdf.setTextColor(0);
+                pdf.text(`${index + 1}. ${item.subpunto || '(sin título)'}`, 20, y);
+                y += 8;
+                
+                // Notas asociadas
+                pdf.setFontSize(10);
+                pdf.setTextColor(100);
+                pdf.setFont('georgia');
+                pdf.text('Notas Asociadas:', 20, y);
+                y += 6;
+                
+                pdf.setFontSize(10);
+                pdf.setTextColor(0);
+                const lines = pdf.splitTextToSize(item.notas || '(sin notas)', 170);
+                pdf.text(lines, 20, y);
+                y += (lines.length * 5) + 10;
             });
 
+            // TAREAS
             if (tareasReunion.length > 0) {
-                html += `
-                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ccc;">
-                        <h3 style="font-size: 14px; font-weight: bold; color: #2a2a2a; margin-bottom: 12px;">
-                            Tareas
-                        </h3>
-                `;
+                if (y > 240) {
+                    pdf.addPage();
+                    y = 20;
+                }
+                y += 5;
+                pdf.setFontSize(11);
+                pdf.setFont('georgia');
+                pdf.setTextColor(100);
+                pdf.text('TAREAS', 20, y);
+                y += 8;
+                
+                pdf.setFontSize(10);
+                pdf.setTextColor(0);
                 tareasReunion.forEach((tarea, index) => {
-                    html += `<p style="font-size: 12px; color: #666; margin-bottom: 8px;">☐ ${index + 1}. ${tarea}</p>`;
+                    if (y > 250) {
+                        pdf.addPage();
+                        y = 20;
+                    }
+                    pdf.text(`☐ ${index + 1}. ${tarea}`, 20, y);
+                    y += 7;
                 });
-                html += `</div>`;
             }
 
-            html += `
-                <hr style="border: none; border-top: 1px solid #ccc; margin-top: 30px; padding-top: 20px;">
-                <p style="font-size: 10px; color: #999; text-align: center;">
-                    Generado: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}
-                </p>
-            `;
+            // PIE DE PÁGINA
+            pdf.setFontSize(9);
+            pdf.setTextColor(150);
+            pdf.text(`Generado: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, 105, 285, { align: 'center' });
 
-            element.innerHTML = html;
-
-            const opt = {
-                margin: 10,
-                filename: `${reunion.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'letter' }
-            };
-
-            window.html2pdf().set(opt).from(element).save();
+            pdf.save(`${reunion.replace(/\s+/g, '_')}_${new Date().getTime()}.pdf`);
         }
 
         btnGuardarNotas.addEventListener('click', async () => {
             const reunion = reunionInput.value.trim();
             const tema = temaInput.value.trim();
-            
             const subpuntos = Array.from(document.querySelectorAll('.subpunto-item'))
-                .map(item => {
-                    const subpunto = item.querySelector('.subpunto-input').value.trim();
-                    const notas = item.querySelector('.subpunto-notas').value.trim();
-                    return { subpunto, notas };
-                })
+                .map(item => ({
+                    subpunto: item.querySelector('.subpunto-input').value.trim(),
+                    notas: item.querySelector('.subpunto-notas').value.trim()
+                }))
                 .filter(item => item.subpunto || item.notas);
 
             if (!reunion || !tema || subpuntos.length === 0) {
@@ -1173,18 +901,11 @@
             try {
                 const hoy = new Date().toISOString().split('T')[0];
                 await addDoc(collection(db, 'notas'), {
-                    reunion,
-                    tema,
-                    subpuntos,
-                    tareas: tareasReunion,
-                    fecha: hoy,
-                    timestamp: new Date().getTime()
+                    reunion, tema, subpuntos, tareas: tareasReunion, fecha: hoy, timestamp: new Date().getTime()
                 });
-
                 generarPDF(reunion, tema, subpuntos);
                 mostrarMensaje(mensajeNotas, '✓ Guardado y PDF descargado', 'success');
-                reunionInput.value = '';
-                temaInput.value = '';
+                reunionInput.value = temaInput.value = '';
                 subpuntosContainer.innerHTML = '';
                 tareasReunion = [];
                 tareasNotasContainer.style.display = 'none';
@@ -1197,6 +918,12 @@
                 btnGuardarNotas.textContent = 'GUARDAR NOTAS';
             }
         });
+
+        function mostrarMensaje(elem, texto, tipo) {
+            elem.textContent = texto;
+            elem.style.color = tipo === 'success' ? '#155724' : '#721c24';
+            setTimeout(() => elem.textContent = '', 3000);
+        }
 
         cargarTareas();
     </script>
