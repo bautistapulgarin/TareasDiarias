@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_23.html -->
+<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_24.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -469,10 +469,10 @@
         <nav>
             <span style="color: #999;">CONTROL DIARIO</span>
             <div>
-                <a href="file:///C:/Users/cpulgarin/Downloads/index_23.html#">PORTAFOLIO</a>
-                <a href="file:///C:/Users/cpulgarin/Downloads/index_23.html#">ACERCA DE</a>
-                <a href="file:///C:/Users/cpulgarin/Downloads/index_23.html#">CONTACTO</a>
-                <a href="file:///C:/Users/cpulgarin/Downloads/index_23.html#">INSTAGRAM</a>
+                <a href="file:///C:/Users/cpulgarin/Downloads/index_24.html#">PORTAFOLIO</a>
+                <a href="file:///C:/Users/cpulgarin/Downloads/index_24.html#">ACERCA DE</a>
+                <a href="file:///C:/Users/cpulgarin/Downloads/index_24.html#">CONTACTO</a>
+                <a href="file:///C:/Users/cpulgarin/Downloads/index_24.html#">INSTAGRAM</a>
             </div>
         </nav>
     </header>
@@ -647,7 +647,7 @@
                         
                         <button class="btn-add-subpunto" id="btnAddSubpunto">+ AGREGAR SUBPUNTO</button>
                         
-                        <div class="tareas-notas-container" id="tareasNotasContainer" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid rgb(208, 208, 204);">
+                        <div class="tareas-notas-container" id="tareasNotasContainer" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #d0d0cc;">
                             <label style="display: block; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 12px; color: #666;">Tareas</label>
                             <div class="tareas-lista" id="tareasLista"></div>
                             <input type="text" id="tareaInput" placeholder="Nueva tarea" style="width: 100%; padding: 10px 12px; border: 1px solid #d0d0cc; background: #fafaf8; font-family: &#39;Georgia&#39;, serif; font-size: 13px; color: #2a2a2a; margin-top: 10px;">
@@ -657,7 +657,7 @@
                         <button class="btn-add-subpunto" id="btnToggleTareas" style="margin-top: 15px;">+ AGREGAR TAREAS</button>
                         
                         <button class="btn-guardar-notas" id="btnGuardarNotas">GUARDAR NOTAS</button>
-                        <div id="mensajeNotas" class="mensaje" style="color: rgb(21, 87, 36);"></div>
+                        <div id="mensajeNotas" class="mensaje"></div>
                     </div>
                 </div>
             </div>
@@ -1137,7 +1137,7 @@
                 jsPDF: { orientation: 'portrait', unit: 'mm', format: 'letter' }
             };
 
-            html2pdf().set(opt).from(element).save();
+            window.html2pdf().set(opt).from(element).save();
         }
 
         btnGuardarNotas.addEventListener('click', async () => {
