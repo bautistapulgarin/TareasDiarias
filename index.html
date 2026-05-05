@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_35.html -->
+<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_37.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -736,18 +736,6 @@
             subpuntosContainer.appendChild(item);
         });
 
-        document.addEventListener('click', (e) => {
-            if (e.target.id === 'btnAddTarea') {
-                e.preventDefault();
-                const tarea = tareaInput.value.trim();
-                if (tarea) {
-                    tareasReunion.push(tarea);
-                    tareaInput.value = '';
-                    renderizarTareas();
-                }
-            }
-        });
-
         tareaInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const tarea = tareaInput.value.trim();
@@ -931,6 +919,19 @@
             elem.style.color = tipo === 'success' ? '#155724' : '#721c24';
             setTimeout(() => elem.textContent = '', 3000);
         }
+
+        // Event listener delegado para botón agregar tarea (debe estar al final)
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'btnAddTarea') {
+                e.preventDefault();
+                const tarea = tareaInput.value.trim();
+                if (tarea) {
+                    tareasReunion.push(tarea);
+                    tareaInput.value = '';
+                    renderizarTareas();
+                }
+            }
+        });
 
         cargarTareas();
     </script>
