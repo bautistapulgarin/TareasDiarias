@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_33.html -->
+<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_35.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -384,7 +384,7 @@
         <nav>
             <div class="nav-left">
                 <span style="color: #999;">CONTROL DIARIO</span>
-                <span class="version">v1.1</span>
+                <span class="version">v1.2</span>
             </div>
             <div>
                 <a href="https://bautistapulgarin.github.io/bitacora/" target="_blank">PROYECTOS</a>
@@ -736,15 +736,15 @@
             subpuntosContainer.appendChild(item);
         });
 
-        btnAddTarea.addEventListener('click', (e) => {
-            e.preventDefault();
-            const tarea = tareaInput.value.trim();
-            if (tarea) {
-                tareasReunion.push(tarea);
-                tareaInput.value = '';
-                renderizarTareas();
-            } else {
-                alert('Por favor escribe una tarea');
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'btnAddTarea') {
+                e.preventDefault();
+                const tarea = tareaInput.value.trim();
+                if (tarea) {
+                    tareasReunion.push(tarea);
+                    tareaInput.value = '';
+                    renderizarTareas();
+                }
             }
         });
 
