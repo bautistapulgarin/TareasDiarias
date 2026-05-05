@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_39.html -->
+<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_42.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -309,17 +309,18 @@
         .modal {
             display: none !important;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: rgba(0, 0, 0, 0.5) !important;
+            z-index: 9999 !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         .modal.show {
             display: flex !important;
+            z-index: 9999 !important;
         }
         .modal-content {
             background: #fafaf8;
@@ -328,6 +329,8 @@
             width: 90%;
             max-width: 450px;
             position: relative;
+            z-index: 10000 !important;
+        }
         }
         .modal-close {
             position: absolute;
@@ -384,7 +387,7 @@
         <nav>
             <div class="nav-left">
                 <span style="color: #999;">CONTROL DIARIO</span>
-                <span class="version">v1.4</span>
+                <span class="version">v1.5</span>
             </div>
             <div>
                 <a href="https://bautistapulgarin.github.io/bitacora/" target="_blank">PROYECTOS</a>
@@ -559,11 +562,15 @@
         let btnAddTarea = null;
 
         // EVENT LISTENERS TAREAS
-        btnNuevaTarea.addEventListener('click', () => {
+        btnNuevaTarea.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Botón Nueva Tarea clickeado');
             inputProyecto.value = inputTarea.value = inputHoraInicial.value = inputHoraCierre.value = '';
             inputPrioridad.value = '5';
             prioridadDisplay.textContent = '5/10';
             modalNuevaTarea.classList.add('show');
+            console.log('Modal clases:', modalNuevaTarea.className);
         });
         closeModalTarea.addEventListener('click', () => modalNuevaTarea.classList.remove('show'));
         closeModalTiempo.addEventListener('click', () => modalTiempo.classList.remove('show'));
