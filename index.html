@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_32.html -->
+<!-- saved from url=(0050)file:///C:/Users/cpulgarin/Downloads/index_33.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -286,6 +286,10 @@
             cursor: pointer;
             margin-top: 8px;
             border-radius: 20px;
+            transition: all 0.3s;
+        }
+        #btnAddTarea:hover {
+            background: #4a6a7b;
         }
         .mensaje {
             text-align: center;
@@ -732,12 +736,15 @@
             subpuntosContainer.appendChild(item);
         });
 
-        btnAddTarea.addEventListener('click', () => {
+        btnAddTarea.addEventListener('click', (e) => {
+            e.preventDefault();
             const tarea = tareaInput.value.trim();
             if (tarea) {
                 tareasReunion.push(tarea);
                 tareaInput.value = '';
                 renderizarTareas();
+            } else {
+                alert('Por favor escribe una tarea');
             }
         });
 
