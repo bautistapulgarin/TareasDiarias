@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0049)file:///C:/Users/cpulgarin/Downloads/index_6.html -->
+<!-- saved from url=(0049)file:///C:/Users/cpulgarin/Downloads/index_8.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,21 +8,112 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            padding: 20px;
             background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
         }
         h1 {
             font-size: 2.5rem;
             color: #333;
+            text-align: center;
+        }
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
         }
     </style>
 </head>
 <body>
-    <h1>Control diario</h1>
+    <div class="container">
+        <h1>Control diario</h1>
+        <div id="status" class="status connected">✓ Conectado a Firestore</div>
+        
+        <textarea id="observacion" placeholder="Escribe tu observación aquí..." style="width: 100%; height: 200px; padding: 10px; margin: 20px 0; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; font-size: 16px;"></textarea>
+        
+        <button id="guardar" style="width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: 600; cursor: pointer;">Guardar</button>
+        
+        <div id="mensaje" style="margin-top: 15px; text-align: center; display: none;"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+        import { collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-K-rjFQLD4ahPG1z5n9Pe_E4W2WfDD94",
+            authDomain: "control-diario-1e2fb.firebaseapp.com",
+            projectId: "control-diario-1e2fb",
+            storageBucket: "control-diario-1e2fb.firebasestorage.app",
+            messagingSenderId: "98274574789",
+            appId: "1:98274574789:web:3c0970ef809754b9dc0bac"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const statusDiv = document.getElementById('status');
+        statusDiv.textContent = '✓ Conectado a Firestore';
+        statusDiv.classList.remove('disconnected');
+        statusDiv.classList.add('connected');
+
+        const btnGuardar = document.getElementById('guardar');
+        const textarea = document.getElementById('observacion');
+        const mensaje = document.getElementById('mensaje');
+
+        btnGuardar.addEventListener('click', async () => {
+            const observacion = textarea.value.trim();
+            
+            if (!observacion) {
+                mensaje.textContent = 'Por favor escribe una observación';
+                mensaje.style.display = 'block';
+                mensaje.style.color = '#721c24';
+                return;
+            }
+
+            btnGuardar.disabled = true;
+            btnGuardar.textContent = 'Guardando...';
+
+            try {
+                await addDoc(collection(db, 'observaciones'), {
+                    texto: observacion,
+                    fecha: new Date(),
+                    timestamp: new Date().getTime()
+                });
+
+                mensaje.textContent = '✓ Guardado exitosamente';
+                mensaje.style.color = '#155724';
+                mensaje.style.display = 'block';
+                textarea.value = '';
+                
+                setTimeout(() => {
+                    mensaje.style.display = 'none';
+                    btnGuardar.disabled = false;
+                    btnGuardar.textContent = 'Guardar';
+                }, 2000);
+            } catch (error) {
+                mensaje.textContent = 'Error al guardar: ' + error.message;
+                mensaje.style.color = '#721c24';
+                mensaje.style.display = 'block';
+                btnGuardar.disabled = false;
+                btnGuardar.textContent = 'Guardar';
+            }
+        });
+    </script>
 
 
 </body></html>
