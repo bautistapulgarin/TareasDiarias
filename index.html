@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<!-- saved from url=(0047)file:///C:/Users/cpulgarin/Downloads/index.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control diario</title>
+    <script src="./index_files/jspdf.umd.min.js.descarga"></script>
+    <script src="./index_files/html2canvas.min.js.descarga"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: #fafaf8;
+            color: #2a2a2a;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid #d0d0cc;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .version {
+            font-size: 10px;
+            color: #999;
+            letter-spacing: 1px;
+        }
+        nav a {
+            text-decoration: none;
+            color: #2a2a2a;
+            transition: opacity 0.3s;
+        }
+        nav a:hover {
+            opacity: 0.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .btn-icons {
+            display: flex;
+            gap: 12px;
+        }
+        .btn-add, .btn-notebook {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #3d3d38;
+            color: #fafaf8;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .btn-add:hover, .btn-notebook:hover {
+            background: #2a2a2a;
+        }
+        .panels-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+        .tareas-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .tarea-card {
+            border: 1px solid #d0d0cc;
+            padding: 18px;
+            background: #fafaf8;
+        }
+        .tarea-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+        .tarea-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .tarea-proyecto {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .tarea-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .btn-small {
+            flex: 1;
+            padding: 9px;
+            background: #8b5a5a;
+            color: #fafaf8;
+            border: none;
+            font-family: 'Georgia', serif;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 20px;
+        }
+        .btn-small.iniciar {
+            background: #5a7a8b;
+        }
+        .btn-small.iniciar:hover {
+            background: #4a6a7b;
+        }
+        .btn-small.terminar:hover {
+            background: #6b4a4a;
+        }
+        .tarea-check {
+            width: 100%;
+            padding: 9px;
+            background: #d0d0cc;
+            color: #666;
+            border: none;
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            cursor: default;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .notas-form {
+            border: 1px solid #d0d0cc;
+            padding: 20px;
+            background: #fafaf8;
+            margin-bottom: 20px;
+        }
+        .form-field {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 7px;
+            color: #666;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1px solid #d0d0cc;
+            background: #fafaf8;
+            font-family: 'Georgia', serif;
+            font-size: 13px;
+            color: #2a2a2a;
+        }
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #2a2a2a;
+        }
+        .subpuntos-container {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .subpunto-item {
+            border: 1px solid #e0e0dd;
+            padding: 15px;
+            background: #f8f8f6;
+        }
+        .subpunto-input, .subpunto-notas {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d0d0cc;
+            background: #fafaf8;
+            font-family: 'Georgia', serif;
+            font-size: 13px;
+            color: #2a2a2a;
+        }
+        .subpunto-notas {
+            margin-top: 12px;
+            min-height: 70px;
+            resize: vertical;
+        }
+        .btn-add-subpunto, .btn-guardar-notas {
+            width: 100%;
+            padding: 12px;
+            background: #3d3d38;
+            color: #fafaf8;
+            border: none;
+            font-family: 'Georgia', serif;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 25px;
+            margin-bottom: 15px;
+        }
+        .btn-add-subpunto:hover, .btn-guardar-notas:hover {
+            background: #2a2a2a;
+        }
+        .tareas-notas-container {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #d0d0cc;
+        }
+        .tareas-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .tarea-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: #f8f8f6;
+            border: 1px solid #e0e0dd;
+        }
+        .btn-eliminar-tarea {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+        }
+        .btn-eliminar-tarea:hover {
+            color: #721c24;
+        }
+        #tareaInput {
+            margin-top: 10px;
+        }
+        #btnAddTarea {
+            width: 100%;
+            padding: 10px;
+            background: #5a7a8b;
+            color: #fafaf8;
+            border: none;
+            font-family: 'Georgia', serif;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 8px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        #btnAddTarea:hover {
+            background: #4a6a7b;
+        }
+        .mensaje {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 12px;
+            min-height: 18px;
+        }
+        .status {
+            text-align: center;
+            font-size: 11px;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .status.connected {
+            color: #155724;
+        }
+        .modal {
+            display: none !important;
+            position: fixed;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: rgba(0, 0, 0, 0.5) !important;
+            z-index: 9999 !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .modal.show {
+            display: flex !important;
+            z-index: 9999 !important;
+        }
+        .modal-content {
+            background: #fafaf8;
+            padding: 35px;
+            border: 1px solid #d0d0cc;
+            width: 90%;
+            max-width: 450px;
+            position: relative;
+            z-index: 10000 !important;
+        }
+        }
+        .modal-close {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            font-size: 26px;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #d0d0cc;
+        }
+        .modal-header h3 {
+            font-size: 1.3rem;
+            font-weight: 400;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 13px;
+            background: #3d3d38;
+            color: #fafaf8;
+            border: none;
+            font-family: 'Georgia', serif;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            border-radius: 25px;
+            margin-top: 15px;
+        }
+        .btn-primary:hover {
+            background: #2a2a2a;
+        }
+        footer {
+            border-top: 1px solid #d0d0cc;
+            padding: 30px 0;
+            margin-top: 60px;
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+        }
+        @media (max-width: 1024px) {
+            .panels-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-left">
+                <span style="color: #999;">CONTROL DIARIO</span>
+                <span class="version">v1.6</span>
+            </div>
+            <div>
+                <a href="https://bautistapulgarin.github.io/bitacora/" target="_blank">PROYECTOS</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="title-section">
+            <h1>CONTROL DIARIO</h1>
+            <div class="btn-icons">
+                <button class="btn-add" id="btnNuevaTarea">+</button>
+                <button class="btn-notebook" id="btnNuevaNotas">📓</button>
+            </div>
+        </div>
+        
+        <div id="status" class="status connected">✓ Conectado</div>
+        
+        <div class="panels-container">
+            <div class="left-panel">
+                <div class="tareas-section">
+                    <h2>Tareas del Día</h2>
+                    <div id="listaTareas" class="tareas-list"><p style="text-align: center; color: #999;">Sin tareas</p></div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="notas-section">
+                    <h2>Toma de Notas</h2>
+                    <div class="notas-form">
+                        <div class="form-field">
+                            <label>Reunión</label>
+                            <input type="text" id="reunionInput" placeholder="Nombre de la reunión">
+                        </div>
+                        
+                        <div class="form-field">
+                            <label>Tema</label>
+                            <input type="text" id="temaInput" placeholder="Tema principal">
+                        </div>
+                        
+                        <div class="subpuntos-container" id="subpuntosContainer"></div>
+                        
+                        <button class="btn-add-subpunto" id="btnAddSubpunto">+ AGREGAR SUBPUNTO</button>
+                        
+                        <div class="tareas-notas-container" id="tareasNotasContainer" style="display: none;">
+                            <label>Tareas</label>
+                            <div class="tareas-lista" id="tareasLista"></div>
+                            <div id="tareasInputContainer"></div>
+                        </div>
+                        
+                        <button class="btn-add-subpunto" id="btnToggleTareas">+ AGREGAR TAREAS</button>
+                        
+                        <button class="btn-guardar-notas" id="btnGuardarNotas">GUARDAR NOTAS</button>
+                        <div id="mensajeNotas" class="mensaje"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modalNuevaTarea" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModalTarea">×</span>
+            <div class="modal-header"><h3>Nueva Tarea</h3></div>
+            <div class="form-field">
+                <label>Proyecto</label>
+                <input type="text" id="proyecto" placeholder="Nombre del proyecto">
+            </div>
+            <div class="form-field">
+                <label>Tarea</label>
+                <input type="text" id="tarea" placeholder="Descripción de la tarea">
+            </div>
+            <div class="form-field">
+                <label>Hora de compromiso inicial</label>
+                <input type="time" id="horaInicial">
+            </div>
+            <div class="form-field">
+                <label>Hora tentativa de cierre</label>
+                <input type="time" id="horaCierre">
+            </div>
+            <div class="form-field">
+                <label>Prioridad (0-10)</label>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <input type="number" id="prioridad" min="0" max="10" value="5" style="width: 60px;">
+                    <div id="prioridadDisplay">5/10</div>
+                </div>
+            </div>
+            <button id="guardarTarea" class="btn-primary">GUARDAR</button>
+            <div id="mensajeTarea" class="mensaje"></div>
+        </div>
+    </div>
+    
+    <div id="modalTiempo" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModalTiempo">×</span>
+            <h3 id="modalTitulo" style="text-align: center; font-size: 1.1rem; margin-bottom: 25px; font-weight: 400;">Registrar Hora de Inicio</h3>
+            <div style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #d0d0cc;">
+                <p id="modalProyecto" style="font-size: 13px; margin: 4px 0;"><strong></strong></p>
+                <p id="modalTareaNombre" style="font-size: 13px; margin: 4px 0;"></p>
+            </div>
+            <div class="form-field">
+                <label id="labelHora">Hora de Inicio:</label>
+                <input type="time" id="horaRegistro">
+                <p id="horaActual" style="font-size: 11px; color: #999; margin-top: 6px;"></p>
+                <div id="horaInicioMostrada" style="display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #d0d0cc;">
+                    <label>Hora de Inicio Registrada:</label>
+                    <div id="horaInicioValor" style="background: #f0f0ed; padding: 12px; border: 1px solid #e0e0dd; margin: 15px 0; font-size: 14px; color: #2a2a2a;"></div>
+                </div>
+            </div>
+            <button id="btnConfirmarHora" class="btn-primary">CONFIRMAR</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Control Diario</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+        import { collection, addDoc, query, where, getDocs, updateDoc, doc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-K-rjFQLD4ahPG1z5n9Pe_E4W2WfDD94",
+            authDomain: "control-diario-1e2fb.firebaseapp.com",
+            projectId: "control-diario-1e2fb",
+            storageBucket: "control-diario-1e2fb.firebasestorage.app",
+            messagingSenderId: "98274574789",
+            appId: "1:98274574789:web:3c0970ef809754b9dc0bac"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const { jsPDF } = window.jspdf;
+
+        document.getElementById('status').textContent = '✓ Conectado';
+        document.getElementById('status').classList.add('connected');
+
+        // TAREAS
+        const btnNuevaTarea = document.getElementById('btnNuevaTarea');
+        const modalNuevaTarea = document.getElementById('modalNuevaTarea');
+        const closeModalTarea = document.getElementById('closeModalTarea');
+        const btnGuardarTarea = document.getElementById('guardarTarea');
+        const inputProyecto = document.getElementById('proyecto');
+        const inputTarea = document.getElementById('tarea');
+        const inputHoraInicial = document.getElementById('horaInicial');
+        const inputHoraCierre = document.getElementById('horaCierre');
+        const inputPrioridad = document.getElementById('prioridad');
+        const prioridadDisplay = document.getElementById('prioridadDisplay');
+        const mensajeTarea = document.getElementById('mensajeTarea');
+        const listaTareas = document.getElementById('listaTareas');
+        const modalTiempo = document.getElementById('modalTiempo');
+        const closeModalTiempo = document.getElementById('closeModalTiempo');
+        const btnConfirmarHora = document.getElementById('btnConfirmarHora');
+        const horaRegistro = document.getElementById('horaRegistro');
+
+        // NOTAS
+        const btnToggleTareas = document.getElementById('btnToggleTareas');
+        const tareasNotasContainer = document.getElementById('tareasNotasContainer');
+        const tareasLista = document.getElementById('tareasLista');
+        const tareasInputContainer = document.getElementById('tareasInputContainer');
+        const reunionInput = document.getElementById('reunionInput');
+        const temaInput = document.getElementById('temaInput');
+        const subpuntosContainer = document.getElementById('subpuntosContainer');
+        const btnAddSubpunto = document.getElementById('btnAddSubpunto');
+        const btnGuardarNotas = document.getElementById('btnGuardarNotas');
+        const mensajeNotas = document.getElementById('mensajeNotas');
+
+        let tareaActual = null;
+        let tareasReunion = [];
+        let tareaInput = null;
+        let btnAddTarea = null;
+
+        // EVENT LISTENERS TAREAS
+        btnNuevaTarea.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Botón Nueva Tarea clickeado');
+            inputProyecto.value = inputTarea.value = inputHoraInicial.value = inputHoraCierre.value = '';
+            inputPrioridad.value = '5';
+            prioridadDisplay.textContent = '5/10';
+            modalNuevaTarea.classList.add('show');
+            console.log('Modal clases:', modalNuevaTarea.className);
+        });
+        closeModalTarea.addEventListener('click', () => modalNuevaTarea.classList.remove('show'));
+        closeModalTiempo.addEventListener('click', () => modalTiempo.classList.remove('show'));
+        inputPrioridad.addEventListener('change', () => {
+            const val = parseInt(inputPrioridad.value) || 5;
+            prioridadDisplay.textContent = `${val}/10`;
+        });
+
+        btnGuardarTarea.addEventListener('click', async () => {
+            const proyecto = inputProyecto.value.trim();
+            const tarea = inputTarea.value.trim();
+            const horaInit = inputHoraInicial.value;
+            const horaCierr = inputHoraCierre.value;
+            const prioridad = inputPrioridad.value;
+
+            if (!proyecto || !tarea || !horaInit || !horaCierr) {
+                mostrarMensaje(mensajeTarea, 'Completa todos los campos', 'error');
+                return;
+            }
+
+            btnGuardarTarea.disabled = true;
+            btnGuardarTarea.textContent = 'GUARDANDO...';
+
+            try {
+                const hoy = new Date().toISOString().split('T')[0];
+                await addDoc(collection(db, 'tareas'), {
+                    proyecto, tarea, horaInicial: horaInit, horaCierre: horaCierr,
+                    prioridad: parseInt(prioridad), fecha: hoy,
+                    horaRealInicio: null, horaRealCierre: null, variacion: null, estado: 'pendiente'
+                });
+                mostrarMensaje(mensajeTarea, '✓ Guardado', 'success');
+                modalNuevaTarea.classList.remove('show');
+                cargarTareas();
+            } catch (error) {
+                mostrarMensaje(mensajeTarea, 'Error: ' + error.message, 'error');
+            } finally {
+                btnGuardarTarea.disabled = false;
+                btnGuardarTarea.textContent = 'GUARDAR';
+            }
+        });
+
+        async function cargarTareas() {
+            const hoy = new Date().toISOString().split('T')[0];
+            const q = query(collection(db, 'tareas'), where('fecha', '==', hoy));
+            const querySnapshot = await getDocs(q);
+            let tareas = [];
+            querySnapshot.forEach(doc => tareas.push({ id: doc.id, data: doc.data() }));
+            tareas.sort((a, b) => {
+                // Tareas completadas al final
+                if (a.data.estado === 'completada' && b.data.estado !== 'completada') return 1;
+                if (a.data.estado !== 'completada' && b.data.estado === 'completada') return -1;
+                // Entre las pendientes, por prioridad descendente
+                if (a.data.estado !== 'completada' && b.data.estado !== 'completada') {
+                    return b.data.prioridad - a.data.prioridad;
+                }
+                // Entre las completadas, mantener orden
+                return 0;
+            });
+            listaTareas.innerHTML = '';
+            if (tareas.length === 0) {
+                listaTareas.innerHTML = '<p style="text-align: center; color: #999;">Sin tareas</p>';
+                return;
+            }
+            tareas.forEach(({ id, data }) => listaTareas.appendChild(crearTareaCard(id, data)));
+        }
+
+        function crearTareaCard(id, data) {
+            const card = document.createElement('div');
+            card.className = 'tarea-card';
+            card.innerHTML = `
+                <div class="tarea-header">
+                    <div>
+                        <div class="tarea-proyecto">${data.proyecto}</div>
+                        <div class="tarea-title">${data.tarea}</div>
+                    </div>
+                    <div>${data.prioridad}/10</div>
+                </div>
+                <div class="tarea-info">${data.horaInicial} → ${data.horaCierre}</div>
+                <div class="tarea-info">
+                    ${data.estado === 'completada' ? `✓ Completado: ${data.horaRealInicio} → ${data.horaRealCierre}` : 'Pendiente'}
+                </div>
+                ${data.variacion ? `<div class="tarea-info" style="font-size: 11px;">Variación: ${data.variacion}</div>` : ''}
+                <div style="display: flex; gap: 8px;">
+                    ${data.estado === 'completada' ? 
+                        `<div class="tarea-check">✓ Completado</div>` :
+                        `<button class="btn-small ${data.horaRealInicio ? 'terminar' : 'iniciar'} btn-iniciar" data-id="${id}">
+                            ${data.horaRealInicio ? 'TERMINAR' : 'INICIAR'}
+                        </button>`
+                    }
+                </div>
+            `;
+            const btnIniciar = card.querySelector('.btn-iniciar');
+            if (btnIniciar) btnIniciar.addEventListener('click', () => abrirModalTiempo(id, data));
+            return card;
+        }
+
+        function abrirModalTiempo(id, data) {
+            tareaActual = { id, data };
+            document.getElementById('modalProyecto').innerHTML = `<strong>${data.proyecto}</strong>`;
+            document.getElementById('modalTareaNombre').textContent = data.tarea;
+            const ahora = new Date();
+            const horaStr = ahora.getHours().toString().padStart(2, '0') + ':' + ahora.getMinutes().toString().padStart(2, '0');
+            if (!data.horaRealInicio) {
+                document.getElementById('modalTitulo').textContent = 'Registrar Hora de Inicio';
+                document.getElementById('labelHora').textContent = 'Hora de Inicio:';
+                horaRegistro.value = horaStr;
+                document.getElementById('horaActual').textContent = `Hora actual: ${horaStr}`;
+                document.getElementById('horaInicioMostrada').style.display = 'none';
+                btnConfirmarHora.textContent = 'CONFIRMAR';
+            } else {
+                document.getElementById('modalTitulo').textContent = 'Terminar Tarea';
+                document.getElementById('labelHora').textContent = 'Hora de Cierre:';
+                horaRegistro.value = horaStr;
+                horaRegistro.disabled = true;
+                document.getElementById('horaActual').textContent = `Hora actual: ${horaStr}`;
+                document.getElementById('horaInicioMostrada').style.display = 'block';
+                document.getElementById('horaInicioValor').textContent = data.horaRealInicio;
+                btnConfirmarHora.textContent = 'TERMINAR';
+            }
+            modalTiempo.classList.add('show');
+        }
+
+        btnConfirmarHora.addEventListener('click', async () => {
+            if (!tareaActual) return;
+            const { id, data } = tareaActual;
+            const docRef = doc(db, 'tareas', id);
+            try {
+                if (!data.horaRealInicio) {
+                    await updateDoc(docRef, { horaRealInicio: horaRegistro.value });
+                    mostrarMensaje(mensajeTarea, '✓ Iniciado', 'success');
+                    modalTiempo.classList.remove('show');
+                    horaRegistro.disabled = false;
+                    cargarTareas();
+                } else {
+                    const ahora = new Date();
+                    const horaCierre = ahora.getHours().toString().padStart(2, '0') + ':' + ahora.getMinutes().toString().padStart(2, '0');
+                    const inicio = (parseInt(data.horaInicial.split(':')[0]) * 60) + parseInt(data.horaInicial.split(':')[1]);
+                    const cierre = (parseInt(data.horaCierre.split(':')[0]) * 60) + parseInt(data.horaCierre.split(':')[1]);
+                    const realInicio = (parseInt(data.horaRealInicio.split(':')[0]) * 60) + parseInt(data.horaRealInicio.split(':')[1]);
+                    const realCierre = (parseInt(horaCierre.split(':')[0]) * 60) + parseInt(horaCierre.split(':')[1]);
+                    const tiempoPlaneado = cierre - inicio;
+                    const tiempoReal = realCierre - realInicio;
+                    const variacion = tiempoReal - tiempoPlaneado;
+                    const h = Math.floor(Math.abs(variacion) / 60);
+                    const m = Math.abs(variacion) % 60;
+                    const signo = variacion >= 0 ? '+' : '-';
+                    await updateDoc(docRef, {
+                        horaRealCierre: horaCierre,
+                        estado: 'completada',
+                        variacion: `${signo}${h}h ${m}m`
+                    });
+                    mostrarMensaje(mensajeTarea, '✓ Completado', 'success');
+                    modalTiempo.classList.remove('show');
+                    horaRegistro.disabled = false;
+                    cargarTareas();
+                }
+            } catch (error) {
+                mostrarMensaje(mensajeTarea, 'Error: ' + error.message, 'error');
+            }
+        });
+
+        // NOTAS
+        btnToggleTareas.addEventListener('click', () => {
+            if (tareasNotasContainer.style.display === 'none') {
+                tareasNotasContainer.style.display = 'block';
+                btnToggleTareas.textContent = '- OCULTAR TAREAS';
+                // Crear input y botón si no existen
+                if (!tareaInput) {
+                    crearInputTarea();
+                }
+            } else {
+                tareasNotasContainer.style.display = 'none';
+                btnToggleTareas.textContent = '+ AGREGAR TAREAS';
+            }
+        });
+
+        function crearInputTarea() {
+            tareasInputContainer.innerHTML = `
+                <input type="text" id="tareaInput" placeholder="Nueva tarea" style="width: 100%; padding: 10px 12px; border: 1px solid #d0d0cc; background: #fafaf8; font-family: 'Georgia', serif; font-size: 13px; color: #2a2a2a; margin-top: 10px;">
+                <button id="btnAddTarea" style="width: 100%; padding: 10px; background: #5a7a8b; color: #fafaf8; border: none; font-family: 'Georgia', serif; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; cursor: pointer; margin-top: 8px; border-radius: 20px;">+ AGREGAR TAREA</button>
+            `;
+            
+            tareaInput = document.getElementById('tareaInput');
+            btnAddTarea = document.getElementById('btnAddTarea');
+            
+            btnAddTarea.addEventListener('click', () => {
+                const tarea = tareaInput.value.trim();
+                if (tarea) {
+                    tareasReunion.push(tarea);
+                    tareaInput.value = '';
+                    renderizarTareas();
+                }
+            });
+            
+            tareaInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const tarea = tareaInput.value.trim();
+                    if (tarea) {
+                        tareasReunion.push(tarea);
+                        tareaInput.value = '';
+                        renderizarTareas();
+                    }
+                }
+            });
+        }
+
+        btnAddSubpunto.addEventListener('click', () => {
+            const item = document.createElement('div');
+            item.className = 'subpunto-item';
+            item.innerHTML = `
+                <input type="text" class="subpunto-input" placeholder="Subpunto">
+                <textarea class="subpunto-notas" placeholder="Notas asociadas..."></textarea>
+            `;
+            subpuntosContainer.appendChild(item);
+        });
+
+        function renderizarTareas() {
+            tareasLista.innerHTML = '';
+            tareasReunion.forEach((tarea, index) => {
+                const item = document.createElement('div');
+                item.className = 'tarea-item';
+                item.innerHTML = `<span>${index + 1}. ${tarea}</span><button class="btn-eliminar-tarea">✕</button>`;
+                item.querySelector('.btn-eliminar-tarea').addEventListener('click', () => {
+                    tareasReunion.splice(index, 1);
+                    renderizarTareas();
+                });
+                tareasLista.appendChild(item);
+            });
+        }
+
+        function generarPDF(reunion, tema, subpuntos) {
+            const pdf = new jsPDF();
+            let y = 15;
+            pdf.setFont('georgia');
+            
+            // HEADER CONSTRUCTORA
+            pdf.setFontSize(14);
+            pdf.setFont('georgia', 'bold');
+            pdf.setTextColor(0);
+            pdf.text('CONSTRUCTORA INGEURBE', 105, y, { align: 'center' });
+            y += 8;
+            
+            // SUBTÍTULO EN CURSIVA
+            pdf.setFontSize(11);
+            pdf.setFont('georgia', 'italic');
+            pdf.setTextColor(80);
+            pdf.text('NOTAS PROFESIONAL DE CONSTRUCCIÓN', 105, y, { align: 'center' });
+            y += 12;
+            
+            // LÍNEA SEPARADORA
+            pdf.setDrawColor(150);
+            pdf.line(20, y, 190, y);
+            y += 10;
+            
+            // TÍTULO REUNIÓN
+            pdf.setFontSize(11);
+            pdf.setFont('georgia');
+            pdf.setTextColor(100);
+            pdf.text('REUNIÓN', 20, y);
+            y += 6;
+            pdf.setFontSize(16);
+            pdf.setFont('georgia', 'bold');
+            pdf.setTextColor(0);
+            pdf.text(reunion, 20, y);
+            y += 15;
+            
+            // TÍTULO TEMA
+            pdf.setFontSize(11);
+            pdf.setFont('georgia');
+            pdf.setTextColor(100);
+            pdf.text('TEMA', 20, y);
+            y += 6;
+            pdf.setFontSize(14);
+            pdf.setFont('georgia', 'bold');
+            pdf.setTextColor(0);
+            pdf.text(tema, 20, y);
+            y += 15;
+            
+            // SUBPUNTOS
+            pdf.setFontSize(11);
+            pdf.setFont('georgia');
+            pdf.setTextColor(100);
+            pdf.text('SUBPUNTOS', 20, y);
+            y += 10;
+            
+            subpuntos.forEach((item, index) => {
+                if (y > 250) {
+                    pdf.addPage();
+                    y = 20;
+                }
+                // Número y subpunto
+                pdf.setFontSize(11);
+                pdf.setFont('georgia', 'bold');
+                pdf.setTextColor(0);
+                pdf.text(`${index + 1}. ${item.subpunto || '(sin título)'}`, 20, y);
+                y += 8;
+                
+                // Notas asociadas
+                pdf.setFontSize(10);
+                pdf.setTextColor(100);
+                pdf.setFont('georgia');
+                pdf.text('Notas Asociadas:', 20, y);
+                y += 6;
+                
+                pdf.setFontSize(10);
+                pdf.setTextColor(0);
+                const lines = pdf.splitTextToSize(item.notas || '(sin notas)', 170);
+                pdf.text(lines, 20, y);
+                y += (lines.length * 5) + 10;
+            });
+
+            // TAREAS
+            if (tareasReunion.length > 0) {
+                if (y > 240) {
+                    pdf.addPage();
+                    y = 20;
+                }
+                y += 5;
+                pdf.setFontSize(11);
+                pdf.setFont('georgia');
+                pdf.setTextColor(100);
+                pdf.text('TAREAS', 20, y);
+                y += 8;
+                
+                pdf.setFontSize(10);
+                pdf.setTextColor(0);
+                tareasReunion.forEach((tarea, index) => {
+                    if (y > 250) {
+                        pdf.addPage();
+                        y = 20;
+                    }
+                    pdf.text(`☐ ${index + 1}. ${tarea}`, 20, y);
+                    y += 7;
+                });
+            }
+
+            // PIE DE PÁGINA
+            pdf.setFontSize(9);
+            pdf.setTextColor(150);
+            pdf.text(`Generado: ${new Date().toLocaleDateString('es-CO')} ${new Date().toLocaleTimeString('es-CO')}`, 105, 285, { align: 'center' });
+
+            pdf.save(`${new Date().toLocaleDateString('es-CO').replace(/\//g, '-')}_${reunion.replace(/\s+/g, '_')}.pdf`);
+        }
+
+        btnGuardarNotas.addEventListener('click', async () => {
+            const reunion = reunionInput.value.trim();
+            const tema = temaInput.value.trim();
+            const subpuntos = Array.from(document.querySelectorAll('.subpunto-item'))
+                .map(item => ({
+                    subpunto: item.querySelector('.subpunto-input').value.trim(),
+                    notas: item.querySelector('.subpunto-notas').value.trim()
+                }))
+                .filter(item => item.subpunto || item.notas);
+
+            if (!reunion || !tema || subpuntos.length === 0) {
+                mostrarMensaje(mensajeNotas, 'Completa reunión, tema y al menos un subpunto', 'error');
+                return;
+            }
+
+            btnGuardarNotas.disabled = true;
+            btnGuardarNotas.textContent = 'GUARDANDO...';
+
+            try {
+                const hoy = new Date().toISOString().split('T')[0];
+                await addDoc(collection(db, 'notas'), {
+                    reunion, tema, subpuntos, tareas: tareasReunion, fecha: hoy, timestamp: new Date().getTime()
+                });
+                generarPDF(reunion, tema, subpuntos);
+                mostrarMensaje(mensajeNotas, '✓ Guardado y PDF descargado', 'success');
+                reunionInput.value = temaInput.value = '';
+                subpuntosContainer.innerHTML = '';
+                tareasReunion = [];
+                tareasNotasContainer.style.display = 'none';
+                btnToggleTareas.textContent = '+ AGREGAR TAREAS';
+                renderizarTareas();
+            } catch (error) {
+                mostrarMensaje(mensajeNotas, 'Error: ' + error.message, 'error');
+            } finally {
+                btnGuardarNotas.disabled = false;
+                btnGuardarNotas.textContent = 'GUARDAR NOTAS';
+            }
+        });
+
+        // Event listener para mostrar mensaje
+        function mostrarMensaje(elem, texto, tipo) {
+            elem.textContent = texto;
+            elem.style.color = tipo === 'success' ? '#155724' : '#721c24';
+            setTimeout(() => elem.textContent = '', 3000);
+        }
+
+        cargarTareas();
+    </script>
+
+
+</body></html>
